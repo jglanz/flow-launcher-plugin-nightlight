@@ -129,3 +129,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/.gitignore
+/.idea/flowl-plugin-nightlight.iml
+/.idea/modules.xml
+/.idea/prettier.xml
+/.idea/vcs.xml

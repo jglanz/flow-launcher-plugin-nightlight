@@ -1,12 +1,12 @@
 {
   "ID": "890a6a95-5d36-4fab-bce1-b4c3f1239098",
-  "ActionKeyword": "npm",
-  "Name": "Search NPM",
-  "Description": "Search NPM packages",
-  "Author": "Joël Kuijper",
-  "Version": "0.0.2",
+  "ActionKeyword": "nightlight",
+  "Name": "Nightlight Toggle",
+  "Description": "Nightlight Toggle",
+  "Author": "Jonathan Glanz",
+  "Version": "1.0.0",
   "Language": "TypeScript",
   "ExecuteFileName": "./dist/main.js",
-  "Website": "https://github.com/Joehoel/flow-launcher-plugin-template-node",
+  "Website": "https://github.com/jglanz/",
   "IcoPath": "./assets/npm.png"
 }

@@ -1,35 +1,24 @@
-import open from "open";
-import { Flow } from "./lib/flow";
-import { z } from "zod";
+import { Flow } from "./lib/flow"
+import { NightLight } from "./nightlight"
 
 // The events are the custom events that you define in the flow.on() method.
-const events = ["search"] as const;
-type Events = (typeof events)[number];
+const events = ["toggle"] as const
+type Events = (typeof events)[number]
 
-const flow = new Flow<Events>("assets/npm.png");
+const flow = new Flow<Events>("assets/bulb.png")
+const nightlight = new NightLight()
 
 flow.on("query", (params) => {
-	const [query] = z.array(z.string()).parse(params);
+  flow.showResult({
+    title: `Nightlight Toggle`,
+    subtitle: "Toggle nightlight on/off",
+    method: "toggle",
+    parameters: [] // dontHideAfterAction: true,
+  })
+})
 
-	const qp = new URLSearchParams({
-		q: query,
-	});
+flow.on("toggle", async (params) => {
+  await nightlight.toggle()
+})
 
-	const url = `https://www.npmjs.com/search?${qp}`;
-
-	flow.showResult({
-		title: `Search NPM package: ${query}`,
-		subtitle: url,
-		method: "search",
-		parameters: [url, "hello"],
-		dontHideAfterAction: true,
-	});
-});
-
-flow.on("search", (params) => {
-	const [url] = z.array(z.string().url()).parse(params);
-
-	open(url);
-});
-
-flow.run();
+flow.run()
