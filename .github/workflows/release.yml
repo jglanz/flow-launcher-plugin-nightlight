@@ -33,4 +33,4 @@ jobs:
                   files: "NightlightToggle-${{steps.version.outputs.prop}}.zip"
                   tag_name: "v${{steps.version.outputs.prop}}"
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
