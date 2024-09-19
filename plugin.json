@@ -1,12 +1,12 @@
 {
-  "ID": "890a6a95-5d36-4fab-bce1-b4c3f1239098",
-  "ActionKeyword": "nightlight",
+  "ID": "ef3a6ece-ca05-4d4f-92ba-2ff8a67e017b",
+  "ActionKeyword": "ni",
   "Name": "Nightlight Toggle",
   "Description": "Nightlight Toggle",
   "Author": "Jonathan Glanz",
   "Version": "1.0.0",
   "Language": "TypeScript",
   "ExecuteFileName": "./dist/main.js",
-  "Website": "https://github.com/jglanz/",
-  "IcoPath": "./assets/npm.png"
+  "Website": "https://github.com/jglanz",
+  "IcoPath": "./assets/bulb.png"
 }

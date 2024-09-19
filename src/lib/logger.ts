@@ -1,6 +1,6 @@
 // Winston file logger with clean output and write to file
 
-import { createLogger, format, transports } from "winston";
+import { createLogger, format, transports } from "winston"
 
 const logger = createLogger({
   level: "info",
@@ -15,12 +15,12 @@ const logger = createLogger({
       format: format.combine(
         // Render in one line in your log file.
         // If you use prettyPrint() here it will be really
-        // difficult to exploit your logs files afterwards.
+        // difficult to exploit your logs files afterward.
         format.json()
-      ),
-    }),
+      )
+    })
   ],
-  exitOnError: false,
-});
+  exitOnError: false
+})
 
-export default logger;
+export default logger

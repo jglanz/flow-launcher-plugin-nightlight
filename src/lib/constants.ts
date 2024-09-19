@@ -1,1 +1,1 @@
-export const PLUGIN_MANIFEST = "plugin.json";
+export const PLUGIN_MANIFEST = "plugin.json"

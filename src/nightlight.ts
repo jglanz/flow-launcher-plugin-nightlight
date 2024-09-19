@@ -1,7 +1,7 @@
-import WinReg from 'winreg'
+import WinReg from "winreg"
 
 const keyPath =
-  '\\Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate'
+  "\\Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate"
 
 /**
  * A class for inspecting Windows 10/11's Night Light feature.
@@ -9,11 +9,10 @@ const keyPath =
 export class NightLight {
   private readonly registryKey_ = new WinReg({
     hive: WinReg.HKCU,
-    key: keyPath,
+    key: keyPath
   })
 
-  constructor() {
-  }
+  constructor() {}
 
   supported(): boolean {
     return this.registryKey_ != null
@@ -21,9 +20,7 @@ export class NightLight {
 
   private getData(): Promise<WinReg.RegistryItem> {
     return new Promise<WinReg.RegistryItem>((resolve, reject) =>
-      this.registryKey_.get('Data', (err, result) =>
-        err ? reject(err) : resolve(result)
-      )
+      this.registryKey_.get("Data", (err, result) => (err ? reject(err) : resolve(result)))
     )
   }
 
@@ -72,7 +69,7 @@ export class NightLight {
 
     const newDataHex = bytesToHex(newData)
     return new Promise<void>((resolve, reject) =>
-      this.registryKey_.set('Data', WinReg.REG_BINARY, newDataHex, err => {
+      this.registryKey_.set("Data", WinReg.REG_BINARY, newDataHex, (err) => {
         err ? reject(err) : resolve()
       })
     )
@@ -82,8 +79,9 @@ export class NightLight {
 // Convert a hex string to a byte array
 function hexToBytes(hex: string): number[] {
   let bytes = []
-  for (let c = 0; c < hex.length; c += 2)
+  for (let c = 0; c < hex.length; c += 2) {
     bytes.push(parseInt(hex.substr(c, 2), 16))
+  }
   return bytes
 }
 
@@ -95,7 +93,7 @@ function bytesToHex(bytes: number[]): string {
     hex.push((current >>> 4).toString(16))
     hex.push((current & 0xf).toString(16))
   }
-  return hex.join('')
+  return hex.join("")
 }
 
 // Example usage:

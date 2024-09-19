@@ -1,6 +1,6 @@
 # Flow Launcher Nightlight Toggle Plugin
 
-Toggle nightlight from launcher with `nightlight`
+Toggle nightlight from launcher with `nightlight` (keyword is `ni)
 
 ## Publishing
 

@@ -1,7 +1,6 @@
 import { Flow } from "./lib/flow"
 import { NightLight } from "./nightlight"
 
-// The events are the custom events that you define in the flow.on() method.
 const events = ["toggle"] as const
 type Events = (typeof events)[number]
 
@@ -13,7 +12,7 @@ flow.on("query", (params) => {
     title: `Nightlight Toggle`,
     subtitle: "Toggle nightlight on/off",
     method: "toggle",
-    parameters: [] // dontHideAfterAction: true,
+    parameters: []
   })
 })
 
