@@ -26,11 +26,18 @@ jobs:
               run: |
                 npm install
                 npm run build
-                zip -r NightlightToggle-${{steps.version.outputs.prop}}.zip . -x '*.git*'
+                zip -r Nightlight-${{steps.version.outputs.prop}}.zip . -x '*.git*'
             - name: Publish
               uses: softprops/action-gh-release@v1
               with:
-                  files: "NightlightToggle-${{steps.version.outputs.prop}}.zip"
+                  files: "Nightlight-${{steps.version.outputs.prop}}.zip"
                   tag_name: "v${{steps.version.outputs.prop}}"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Publish
+              uses: softprops/action-gh-release@v1
+              with:
+                files: "Nightlight-${{steps.version.outputs.prop}}.zip"
+                tag_name: "latest"
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
