@@ -152,7 +152,8 @@ export class Flow<TMethods, TSettings = Record<string, string>>
    * from Flow.
    */
   public on(method: keyof MethodsObj<TMethods>, callbackFn: (params: Parameters) => void) {
-    this.methods[method] = callbackFn.bind(this, this.data.parameters)
+    // logger.info(`reg ${method} data=${JSON.stringify(this.data)}`)
+    this.methods[method] = callbackFn.bind(this, ...this.data.parameters)
   }
 
   /**
@@ -299,6 +300,6 @@ export class Flow<TMethods, TSettings = Record<string, string>>
    * your script, or after all the `on()` functions have been called.
    */
   public run() {
-    this.data.method in this.methods && this.methods[this.data.method]()
+    this.data.method in this.methods && this.methods[this.data.method].call(this)
   }
 }
