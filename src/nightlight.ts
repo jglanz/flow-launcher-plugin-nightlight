@@ -1,26 +1,44 @@
 import WinReg from "winreg"
 
-const keyPath =
-  "\\Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate"
+export enum NightLightKeyPath {
+  State = "\\Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate",
+  Settings = "\\Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.settings\\windows.data.bluelightreduction.settings"
+}
+
+function markDataChanged(newData: number[]): void {
+  for (let i = 10; i < 15; i++) {
+    if (newData[i] !== 0xff) {
+      newData[i]++
+      break
+    }
+  }
+}
 
 /**
  * A class for inspecting Windows 10/11's Night Light feature.
  */
 export class NightLight {
-  private readonly registryKey_ = new WinReg({
+  private readonly registryStateKey_ = new WinReg({
     hive: WinReg.HKCU,
-    key: keyPath
+    key: NightLightKeyPath.State
+  })
+
+  private readonly registrySettingsKey_ = new WinReg({
+    hive: WinReg.HKCU,
+    key: NightLightKeyPath.Settings
   })
 
   constructor() {}
 
   supported(): boolean {
-    return this.registryKey_ != null
+    return this.registryStateKey_ != null
   }
 
-  private getData(): Promise<WinReg.RegistryItem> {
+  getData(key: NightLightKeyPath = NightLightKeyPath.State): Promise<WinReg.RegistryItem> {
+    const regKey =
+      key === NightLightKeyPath.State ? this.registryStateKey_ : this.registrySettingsKey_
     return new Promise<WinReg.RegistryItem>((resolve, reject) =>
-      this.registryKey_.get("Data", (err, result) => (err ? reject(err) : resolve(result)))
+      regKey.get("Data", (err, result) => (err ? reject(err) : resolve(result)))
     )
   }
 
@@ -33,11 +51,11 @@ export class NightLight {
   }
 
   async enable(): Promise<void> {
-    if (this.supported() && !(await this.enabled())) this.toggle()
+    if (this.supported() && !(await this.enabled())) await this.toggle()
   }
 
   async disable(): Promise<void> {
-    if (this.supported() && (await this.enabled())) this.toggle()
+    if (this.supported() && (await this.enabled())) await this.toggle()
   }
 
   async toggle(): Promise<void> {
@@ -60,24 +78,54 @@ export class NightLight {
       newData[24] = 0x00
     }
 
-    for (let i = 10; i < 15; i++) {
-      if (newData[i] !== 0xff) {
-        newData[i]++
-        break
-      }
-    }
+    markDataChanged(newData)
 
     const newDataHex = bytesToHex(newData)
     return new Promise<void>((resolve, reject) =>
-      this.registryKey_.set("Data", WinReg.REG_BINARY, newDataHex, (err) => {
+      this.registryStateKey_.set("Data", WinReg.REG_BINARY, newDataHex, (err) => {
         err ? reject(err) : resolve()
       })
     )
   }
+
+  async getTemperature(): Promise<number> {
+    const rawData = await this.getData(NightLightKeyPath.Settings)
+    const data = hexToBytes(rawData.value)
+    const size = data.length
+    const tempOffset = size - 20
+    const tempPart1 = data[tempOffset],
+      tempPart2 = data[tempOffset + 1]
+
+    const adjustedTemp = tempPart1 / 2 - 0x80
+    const temp = (tempPart2 << 6) + adjustedTemp
+    
+    return temp
+  }
+
+  async setTemperature(value: number): Promise<number> {
+    if (value < 1200 || value > 6500) return -1
+
+    const rawData = await this.getData(NightLightKeyPath.Settings)
+    const data = hexToBytes(rawData.value)
+    const size = data.length
+    const tempOffset = size - 20
+    data[tempOffset] = (value & 0x3f) * 2 + 0x80
+    data[tempOffset + 1] = value >> 6
+
+    markDataChanged(data)
+
+    const newDataHex = bytesToHex(data)
+    await new Promise<void>((resolve, reject) =>
+      this.registrySettingsKey_.set("Data", WinReg.REG_BINARY, newDataHex, (err) => {
+        err ? reject(err) : resolve()
+      })
+    )
+    return await this.getTemperature()
+  }
 }
 
 // Convert a hex string to a byte array
-function hexToBytes(hex: string): number[] {
+export function hexToBytes(hex: string): number[] {
   let bytes = []
   for (let c = 0; c < hex.length; c += 2) {
     bytes.push(parseInt(hex.substr(c, 2), 16))
@@ -86,7 +134,7 @@ function hexToBytes(hex: string): number[] {
 }
 
 // Convert a byte array to a hex string
-function bytesToHex(bytes: number[]): string {
+export function bytesToHex(bytes: number[]): string {
   let hex = []
   for (let i = 0; i < bytes.length; i++) {
     let current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i]
