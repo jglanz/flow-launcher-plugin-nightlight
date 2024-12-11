@@ -1,10 +1,10 @@
 {
   "ID": "ef3a6ece-ca05-4d4f-92ba-2ff8a67e017b",
   "ActionKeyword": "ni",
-  "Name": "Nightlight Toggle",
-  "Description": "Nightlight Toggle",
+  "Name": "Nightlight",
+  "Description": "Nightlight Controls",
   "Author": "Jonathan Glanz",
-  "Version": "1.1.0",
+  "Version": "1.1.1",
   "Language": "TypeScript",
   "ExecuteFileName": "./dist/main.js",
   "Website": "https://github.com/jglanz",
