@@ -5,6 +5,10 @@ export enum NightLightKeyPath {
   Settings = "\\Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.settings\\windows.data.bluelightreduction.settings"
 }
 
+async function wait(ms: number): Promise<void> {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms))
+}
+
 function markDataChanged(newData: number[]): void {
   for (let i = 10; i < 15; i++) {
     if (newData[i] !== 0xff) {
@@ -115,11 +119,16 @@ export class NightLight {
     markDataChanged(data)
 
     const newDataHex = bytesToHex(data)
+    
     await new Promise<void>((resolve, reject) =>
       this.registrySettingsKey_.set("Data", WinReg.REG_BINARY, newDataHex, (err) => {
         err ? reject(err) : resolve()
       })
     )
+    await wait(250)
+    await this.disable()
+    await wait(250)
+    await this.enable()
     return await this.getTemperature()
   }
 }
